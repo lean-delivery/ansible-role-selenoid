@@ -5,8 +5,14 @@
   with_items:
     - { name: docker-py }
 
+- name: Check if Docker installed
+  apt:
+    name: "docker-ce"
+    state: present
+
 - name: Selenoid | Check selenoid container exist
-  shell: 'docker ps -aq --filter "name={{ item }}"'
+  docker_container_facts:
+    name: {{ item }}
   with_items:
     - 'selenoid'
   register: found_containers
