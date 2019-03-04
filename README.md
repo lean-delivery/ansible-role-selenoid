@@ -1,6 +1,6 @@
 ## Selenoid in docker
 
-Set up [selenoid](https://github.com/aerokube/selenoid) in docker
+Set up [selenoid](https://github.com/lean-delivery/ansible-role-selenoid) in docker
 
 #### Requirements
 
@@ -37,3 +37,8 @@ grid-router may help you generate browser.xml (using sctl and ./files/input.json
 
 ## License
 See LICENSE
+
+## Author Information
+authors:
+
+  - Lean Delivery Team team@lean-delivery.com

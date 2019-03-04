@@ -1,9 +1,18 @@
+---
+dependencies: []
+
 galaxy_info:
-  author: Alexandr Andryashin, Denis Arslanbekov
+  role_name: "selenoid"
+  author: "Lean Delivery team team@lean-delivery.com"
   description: Deploy selenoid
-  company: Iqoption Ltd.
-  min_ansible_version: 2.2
+  company: "EPAM Systems"
+  license: "Apache"
+  min_ansible_version: 2.5.14
+  issue_tracker_url: "https://github.com/lean-delivery/ansible-role-selenoid/issues"
   platforms:
   - name: Ubuntu
     versions:
     - 16.04
+  galaxy_tags:
+    - selenoid
+    - docker
