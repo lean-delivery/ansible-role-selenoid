@@ -1,46 +1,59 @@
 ---
+- name: install deps
+  apt:
+    update_cache: True
+    name:
+      - python3-pip
+
+
 - name: Selenoid | Install certain python modules for docker
   pip:
-    name: "{{ item.name }}"
-  with_items:
-    - { name: docker-py }
-
-- name: Check if Docker installed
-  apt:
-    name: "docker-ce"
-    state: present
-
-- name: Selenoid | Check selenoid container exist
-  docker_container_facts:
-    name: {{ item }}
-  with_items:
-    - 'selenoid'
-  register: found_containers
-
-- name: Selenoid | Remove selenoid container if exist
-  docker_container:
-    name: "{{ container_name }}"
     state: absent
-  with_items: '{{ found_containers.results }}'
-  when: item.stdout
+    name: "docker"
+
+- name: Selenoid | Install certain python modules for docker
+  pip:
+    name: "docker-py"
+
+- name: install docker
+  include: docker.yml
+
+- name: config dir
+  file:
+    path: "{{ selenoid_config_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 777
+
+- name: stop selenoid
+  docker_container:
+    name: selenoid
+    state: absent
+  ignore_errors: True
+
+- name: stop cm
+  docker_container:
+    name: cm
+    state: absent
+  ignore_errors: True
 
 - name: Selenoid | Run CM container, download browser images and run selenoid
   docker_container:
     name: cm
     image: "aerokube/cm:{{ selenoid_cm_version }}"
+    state: started
+    recreate: True
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "{{ selenoid_config_dir }}:/root"
     env:
-      TZ: "{{ selenoid_time_zone }}"
       OVERRIDE_HOME: "{{ selenoid_config_dir }}"
-      DOCKER_API_VERSION: "{{ selenoid_docker_api_version }}"
     command: >
       selenoid start
-        --version {{ selenoid_version }}
-        --tmpfs {{ selenoid_tmpfs }}
-        --env DOCKER_API_VERSION={{ selenoid_docker_api_version }}
-        --browsers {% for browser in selenoid_browsers -%}{{ browser }}{%- if not loop.last -%},{%- endif -%}{%- endfor %}
-        --last-versions {{ selenoid_browsers_last_versions }}
+        --last-versions 3
+        --args "-limit 15"
+        --vnc
+        --tmpfs 512
         --force
-        --args "-limit {{ selenoid_limit }} -listen :{{ selenoid_listen_port }}"
+ 

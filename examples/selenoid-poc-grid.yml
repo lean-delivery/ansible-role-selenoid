@@ -1,0 +1,24 @@
+---
+- hosts: all
+  remote_user: root
+  vars: 
+    selenoname: selenoid
+    selenoid_port: 4444
+    health_check: http://localhost:{{ selenoid_port}}/status
+    timeout: 1s
+    interval: 10s
+    local_service_address: 127.0.0.1
+  roles:
+    - name: ../../ansible-role-selenoid
+      become: True
+
+  post_tasks:
+    - name: Register Selenoid service with http check
+      template:
+        src: selenoid.j2
+        # dest: '/etc/consul/consul.d/selenoid.json'
+        dest: '/tmp/selenoid.json'
+        owner: root
+        group: root
+        mode: 0644
+      become: True

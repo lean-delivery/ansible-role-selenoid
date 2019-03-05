@@ -1,33 +1,26 @@
 {
     "service": {
-      "id": "{{ selenoid }}",
-      "name": "{{ selenoname }}",
-      "tags": ["primary"],
-      "address": "",
+      "id": "selenoid-{{ ansible_hostname }}",
+      "name": "selenoid",
+      "tags": ["linux", "selenoid", "docker"],
+      "address": "{{ ansible_default_ipv4.address }}",
       "meta": {
-        "meta": "for my service"
+        "host": "ansible_hostname",
+        "cm_version": "{{ selenoid_cm_version }}",
+        "selenoid_version": "{{ selenoid_version }}"
       },
-      "port": {{ port }},
+      "port": {{ selenoid_port }},
       "enable_tag_override": false,
       "checks": [
         {
-      "id": "selenoid-1 check",
-      "name": "selenoid tcp check status on port 4444",
-      "http": "{{ health_check }}",
-      "method": "GET",
-      "timeout": "{{ timeout }}",
+          "id": "selenoid-{{ ansible_hostname }} check",
+          "name": "selenoid tcp check status on port 4444",
+          "http": "{{ health_check }}",
+          "method": "GET",
+          "timeout": "{{ timeout }}",
           "interval": "{{ interval }}"
         }
       ],
-      "kind": "connect-proxy",
-      "proxy": {
-        "destination_service_name": "{{ selenoname }}",
-        "destination_service_id": "{{ selenoid }}",
-        "local_service_address": "{{ local_service_address }}",
-        "local_service_port": {{ port }},
-        "config": {},
-        "upstreams": []
-      },
       "weights": {
         "passing": 5,
         "warning": 1
