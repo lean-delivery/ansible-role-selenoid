@@ -1,0 +1,7 @@
+---
+# handlers file for consul-agent-ansible
+- name: "Reload consul"
+  service:
+    name: consul
+    state: reloaded
+  ignore_errors: True

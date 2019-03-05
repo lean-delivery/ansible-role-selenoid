@@ -1,0 +1,36 @@
+{
+    "service": {
+      "id": "{{ selenoid }}",
+      "name": "{{ selenoname }}",
+      "tags": ["primary"],
+      "address": "",
+      "meta": {
+        "meta": "for my service"
+      },
+      "port": {{ port }},
+      "enable_tag_override": false,
+      "checks": [
+        {
+      "id": "selenoid-1 check",
+      "name": "selenoid tcp check status on port 4444",
+      "http": "{{ health_check }}",
+      "method": "GET",
+      "timeout": "{{ timeout }}",
+          "interval": "{{ interval }}"
+        }
+      ],
+      "kind": "connect-proxy",
+      "proxy": {
+        "destination_service_name": "{{ selenoname }}",
+        "destination_service_id": "{{ selenoid }}",
+        "local_service_address": "{{ local_service_address }}",
+        "local_service_port": {{ port }},
+        "config": {},
+        "upstreams": []
+      },
+      "weights": {
+        "passing": 5,
+        "warning": 1
+      }
+    }
+  }
