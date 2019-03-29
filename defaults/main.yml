@@ -1,5 +1,5 @@
 ---
-selenoid_cm_version: 1.5.7
-selenoid_version: 1.9.0
-selenoid_tmpfs: /tmp
-selenoid_config_dir: /etc/selenoid
+selenoid_cm_version: '1.5.7'
+selenoid_version: '1.9.0'
+selenoid_tmpfs: '/tmp'
+selenoid_config_dir: '/etc/selenoid'

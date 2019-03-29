@@ -3,7 +3,7 @@
   apt:
     update_cache: True
     name:
-      - python-pip
+      - python3-pip
 
 - name: Selenoid | Install certain python modules for docker
   pip:
@@ -42,7 +42,11 @@
     name: cm
     image: "aerokube/cm:{{ selenoid_cm_version }}"
     state: started
-    recreate: True
+    pull: yes
+    recreate: yes
+    restart: yes
+    restart_policy: unless-stopped
+    timeout: 600
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "{{ selenoid_config_dir }}:/root"

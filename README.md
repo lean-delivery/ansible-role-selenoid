@@ -42,3 +42,12 @@ See LICENSE
 authors:
 
   - Lean Delivery Team team@lean-delivery.com
+
+
+#### Example playbook for packer
+---
+- hosts: all
+  gather_facts: no
+  roles:
+    - { role: ../ansible-role-selenoid, become: true }
+---
