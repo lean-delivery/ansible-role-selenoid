@@ -5,9 +5,8 @@ Description=selenoid
 Environment="DOCKER_API_VERSION=1.38"
 Type=simple
 User=selenoid
-Group=selenoid
 GuessMainPID=true
-ExecStart={{ selenoid_config_dir }}/selenoid -conf {{ selenoid_config_dir }}/config/browsers.json
+ExecStart={{ selenoid_config_dir }}/selenoid -conf {{ selenoid_config_dir }}/config/browsers.json -video-output-dir {{ selenoid_config_dir }}/video
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStop=/bin/kill -15 $MAINPID
 Restart=always

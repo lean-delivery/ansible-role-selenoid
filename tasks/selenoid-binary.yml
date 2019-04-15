@@ -31,15 +31,13 @@
     path: "{{ selenoid_config_dir }}/config"
     state: directory
     owner: selenoid
-    group: selenoid
-    mode: 0644
+    mode: 0755
 
 - name: Create browsers config for selenoid
   template:
     src: browsers.json.j2
     dest: "{{ selenoid_config_dir }}/config/browsers.json"
     owner: selenoid
-    group: selenoid
   become: true
 
 - name: Create systemd file selenoid
