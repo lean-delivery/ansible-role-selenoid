@@ -32,13 +32,13 @@
     state: directory
     owner: selenoid
     mode: 0755
-  become: true
 
 - name: change permission on docker socket
   file:
     path: /var/run/docker.sock
     state: touch
     mode: 0666
+  become: true
 
 - name: Create browsers config for selenoid
   template:
