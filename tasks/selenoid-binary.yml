@@ -36,7 +36,6 @@
 - name: change permission on docker socket
   file:
     path: /var/run/docker.sock
-    state: touch
     mode: 0666
   become: true
 
