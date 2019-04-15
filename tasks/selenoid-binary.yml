@@ -32,6 +32,7 @@
     state: directory
     owner: selenoid
     mode: 0755
+  become: true
 
 - name: change permission on docker socket
   file:
