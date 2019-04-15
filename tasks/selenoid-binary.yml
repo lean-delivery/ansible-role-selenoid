@@ -32,7 +32,7 @@
     state: directory
     owner: selenoid
     group: selenoid
-    mode: 777
+    mode: 0644
 
 - name: Create browsers config for selenoid
   template:
