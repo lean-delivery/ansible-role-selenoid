@@ -33,6 +33,12 @@
     owner: selenoid
     mode: 0755
 
+- name: change permission on docker socket
+  file:
+    path: /var/run/docker.sock
+    state: touch
+    mode: 0666
+
 - name: Create browsers config for selenoid
   template:
     src: browsers.json.j2
