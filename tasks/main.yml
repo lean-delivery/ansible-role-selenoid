@@ -17,6 +17,7 @@
     home: "/home/selenoid"
     comment: "Selenoid user"
     shell: "/usr/sbin/nologin"
+    groups: docker
     state: "present"
   become: true
 
