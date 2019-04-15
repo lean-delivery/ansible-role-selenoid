@@ -9,22 +9,6 @@
     - 'system/not-supported.yml'
   loop_control:
     loop_var: platform
-  when: selenoid_binary == 'false'
-
-- name: "Creating user for daemons"
-  user:
-    name: "selenoid"
-    create_home: True
-    home: "/home/selenoid"
-    comment: "Go Grid Router user"
-    shell: "/usr/sbin/nologin"
-    state: "present"
-  become: true
-
-- name: "Setup home directory permissions"
-  file:
-    path: "/home/selenoid"
-    mode: 0770
 
 - name: config dir
   file:
@@ -34,37 +18,9 @@
     group: selenoid
     mode: 777
 
-- name: Download selenoid_linux_amd64 binary file
-  get_url:
-    url: "https://github.com/aerokube/selenoid/releases/download/{{ SELENOID_VERSION }}/selenoid_linux_amd64"
-    dest: "{{ selenoid_config_dir }}/selenoid"
-    owner: selenoid
-    group: selenoid
-    mode: a+x
+- name: Install binary selenoid
+  include: selenoid-binary.yml
   when: selenoid_binary == 'true'
-
-- name: config dir
-  file:
-    path: "{{ selenoid_config_dir }}/config"
-    state: directory
-    owner: selenoid
-    group: selenoid
-    mode: 777
-  when: selenoid_binary == 'true'
-
-- name: Create browsers config for selenoid
-  template:
-    src: browsers.json.j2
-    dest: "{{ selenoid_config_dir }}/config/browsers.json"
-    owner: selenoid
-    group: selenoid
-  become: true
-  when: selenoid_binary == 'true'
-
-#- name: Start Selenoid
-#  command: "{{ selenoid_config_dir }}/selenoid -conf {{ selenoid_config_dir }}/config/browsers.json"
-#  become: true
-#  when: selenoid_binary == 'true'
 
 - name: stop selenoid
   docker_container:
