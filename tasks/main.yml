@@ -15,7 +15,7 @@
   user:
     name: "selenoid"
     create_home: True
-    home: "selenoid"
+    home: "/home/selenoid"
     comment: "Go Grid Router user"
     shell: "/usr/sbin/nologin"
     state: "present"
