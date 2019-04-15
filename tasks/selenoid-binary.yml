@@ -1,18 +1,4 @@
 ---
-- name: "Creating user for daemons"
-  user:
-    name: "selenoid"
-    create_home: True
-    home: "/home/selenoid"
-    comment: "Selenoid user"
-    shell: "/usr/sbin/nologin"
-    state: "present"
-  become: true
-
-- name: "Setup home directory permissions"
-  file:
-    path: "/home/selenoid"
-    mode: 0770
 
 - name: Download selenoid_linux_amd64 binary file
   get_url:

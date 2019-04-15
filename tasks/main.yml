@@ -10,6 +10,21 @@
   loop_control:
     loop_var: platform
 
+- name: "Creating user for daemons"
+  user:
+    name: "selenoid"
+    create_home: True
+    home: "/home/selenoid"
+    comment: "Selenoid user"
+    shell: "/usr/sbin/nologin"
+    state: "present"
+  become: true
+
+- name: "Setup home directory permissions"
+  file:
+    path: "/home/selenoid"
+    mode: 0770
+
 - name: config dir
   file:
     path: "{{ selenoid_config_dir }}"
