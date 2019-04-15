@@ -61,10 +61,10 @@
   become: true
   when: selenoid_binary == 'true'
 
-- name: Start Selenoid
-  command: "{{ selenoid_config_dir }}/selenoid -conf {{ selenoid_config_dir }}/config/browsers.json"
-  become: true
-  when: selenoid_binary == 'true'
+#- name: Start Selenoid
+#  command: "{{ selenoid_config_dir }}/selenoid -conf {{ selenoid_config_dir }}/config/browsers.json"
+#  become: true
+#  when: selenoid_binary == 'true'
 
 - name: stop selenoid
   docker_container:
