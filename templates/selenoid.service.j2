@@ -2,10 +2,12 @@
 Description=selenoid
 
 [Service]
+Environment="DOCKER_API_VERSION=1.38"
 Type=simple
 User=selenoid
+Group=selenoid
 GuessMainPID=true
-ExecStart="DOCKER_API_VERSION={{ DOCKER_API_VERSION }} {{ selenoid_config_dir }}/selenoid -conf {{ selenoid_config_dir }}/config/browsers.json"
+ExecStart={{ selenoid_config_dir }}/selenoid -conf {{ selenoid_config_dir }}/config/browsers.json
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStop=/bin/kill -15 $MAINPID
 Restart=always

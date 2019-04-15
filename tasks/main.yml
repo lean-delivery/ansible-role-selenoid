@@ -23,7 +23,7 @@
 - name: "Setup home directory permissions"
   file:
     path: "/home/selenoid"
-    mode: 0770
+    mode: 0755
 
 - name: config dir
   file:
@@ -31,7 +31,7 @@
     state: directory
     owner: selenoid
     group: selenoid
-    mode: 777
+    mode: 0644
 
 - name: Install binary selenoid
   include: selenoid-binary.yml
