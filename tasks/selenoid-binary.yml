@@ -34,9 +34,7 @@
     mode: 0755
 
 - name: change permission on docker socket
-  file:
-    path: /var/run/docker.sock
-    mode: 0666
+  shell: "chmod 666 /var/run/docker.sock"
   become: true
 
 - name: Create browsers config for selenoid
