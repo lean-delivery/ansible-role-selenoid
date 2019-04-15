@@ -1,5 +1,18 @@
 ---
 selenoid_cm_version: '1.5.7'
-selenoid_version: '1.9.0'
+#DOCKER_API_VERSION: '1.26'
+SELENOID_VERSION: '1.9.1'
 selenoid_tmpfs: '/tmp'
 selenoid_config_dir: '/etc/selenoid'
+SELENOID_CHROME_VERSION:
+  - 73.0
+  - 72.0
+  - 71.0
+SELENOID_FIREFOX_VERSION:
+  - 66.0
+  - 65.0
+  - 64.0
+SELENOID_OPERA_VERSION:
+  - 58.0
+  - 57.0
+  - 56.0

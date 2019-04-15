@@ -1,29 +1,70 @@
 ---
-- name: install deps
-  apt:
-    update_cache: True
-    name:
-      - python3-pip
+- name: Load a variables
+  include_vars: '{{ ansible_os_family }}.yml'
 
-- name: Selenoid | Install certain python modules for docker
-  pip:
-    state: absent
-    name: "docker"
+- name: Choose platform based task
+  include_tasks: '{{ platform }}'
+  with_first_found:
+    - 'system/{{ ansible_os_family }}.yml'
+    - 'system/not-supported.yml'
+  loop_control:
+    loop_var: platform
+  when: selenoid_binary = false
 
-- name: Selenoid | Install certain python modules for docker
-  pip:
-    name: "docker-py"
+- name: "Creating user for daemons"
+  user:
+    name: "selenoid"
+    create_home: True
+    home: "selenoid"
+    comment: "Go Grid Router user"
+    shell: "/usr/sbin/nologin"
+    state: "present"
+  become: true
 
-- name: install docker
-  include: docker.yml
+- name: "Setup home directory permissions"
+  file:
+    path: "/home/selenoid"
+    mode: 0770
 
 - name: config dir
   file:
     path: "{{ selenoid_config_dir }}"
     state: directory
-    owner: root
-    group: root
+    owner: selenoid
+    group: selenoid
     mode: 777
+
+- name: Download selenoid_linux_amd64 binary file
+  get_url:
+    url: "https://github.com/aerokube/selenoid/releases/download/{{ SELENOID_VERSION }}/selenoid_linux_amd64"
+    dest: {{ selenoid_config_dir }}/selenoid
+    owner: selenoid
+    group: selenoid
+    mode: a+x
+  when: selenoid_binary = true
+
+- name: config dir
+  file:
+    path: "{{ selenoid_config_dir }}/config"
+    state: directory
+    owner: selenoid
+    group: selenoid
+    mode: 777
+  when: selenoid_binary = true
+
+- name: Create browsers config for selenoid
+  template:
+    src: browsers.json.j2
+    dest: "{{ selenoid_config_dir }}/config/browsers.json"
+    owner: selenoid
+    group: selenoid
+  become: true
+  when: selenoid_binary = true
+
+- name: Start Selenoid
+  command: .{{ selenoid_config_dir }}/selenoid
+  become: true
+  when: selenoid_binary = true
 
 - name: stop selenoid
   docker_container:
@@ -37,26 +78,12 @@
     state: absent
   ignore_errors: True
 
-- name: Selenoid | Run CM container, download browser images and run selenoid
-  docker_container:
-    name: cm
-    image: "aerokube/cm:{{ selenoid_cm_version }}"
-    state: started
-    pull: yes
-    recreate: yes
-    restart: yes
-    restart_policy: unless-stopped
-    timeout: 600
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "{{ selenoid_config_dir }}:/root"
-    env:
-      OVERRIDE_HOME: "{{ selenoid_config_dir }}"
-    command: >
-      selenoid start
-        --last-versions 3
-        --args "-limit 15"
-        --vnc
-        --tmpfs 512
-        --force
- 
+- name: Docker pull cm and Selenoid
+  include: selenoid.yml
+  when: selenoid_binary = false
+
+- name: Create consul service file
+  template:
+    src: consul-selenoid-service.json.j2
+    dest: "/etc/consul/consul.d/consul-selenoid-service.json"
+  become: true
