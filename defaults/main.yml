@@ -1,6 +1,6 @@
 ---
 selenoid_cm_version: '1.5.7'
-#DOCKER_API_VERSION: '1.26'
+DOCKER_API_VERSION: '1.38'
 SELENOID_VERSION: '1.9.1'
 selenoid_tmpfs: '/tmp'
 selenoid_config_dir: '/etc/selenoid'

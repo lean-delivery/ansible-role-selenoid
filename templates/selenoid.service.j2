@@ -5,7 +5,7 @@ Description=selenoid
 Type=simple
 User=selenoid
 GuessMainPID=true
-ExecStart="{{ selenoid_config_dir }}/selenoid -conf {{ selenoid_config_dir }}/config/browsers.json"
+ExecStart="DOCKER_API_VERSION={{ DOCKER_API_VERSION }} {{ selenoid_config_dir }}/selenoid -conf {{ selenoid_config_dir }}/config/browsers.json"
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStop=/bin/kill -15 $MAINPID
 Restart=always
