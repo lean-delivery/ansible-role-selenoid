@@ -2,7 +2,7 @@
 
 - name: Download selenoid_linux_amd64 binary file
   get_url:
-    url: 'https://github.com/aerokube/selenoid/releases/download/{{ SELENOID_VERSION }}/selenoid_linux_amd64'
+    url: 'https://github.com/aerokube/selenoid/releases/download/{{ selenoid_version }}/selenoid_linux_amd64'
     dest: '{{ selenoid_config_dir }}/selenoid'
     owner: selenoid
     group: selenoid
@@ -12,19 +12,19 @@
   docker_image:
     name: 'selenoid/vnc:chrome_{{ item }}'
   with_items:
-    - '{{ SELENOID_CHROME_VERSION }}'
+    - '{{ selenoid_chrome_version }}'
 
 - name: Docker pull images with firefox browser
   docker_image:
     name: 'selenoid/vnc:firefox_{{ item }}'
   with_items:
-    - '{{ SELENOID_FIREFOX_VERSION }}'
+    - '{{ selenoid_firefox_version }}'
 
 - name: Docker pull images with opera browser
   docker_image:
     name: 'selenoid/vnc:opera_{{ item }}'
   with_items:
-    - '{{ SELENOID_OPERA_VERSION }}'
+    - '{{ selenoid_opera_version }}'
 
 - name: config dir
   file:

@@ -1,18 +1,18 @@
 ---
-selenoid_cm_version: '1.5.7'
-DOCKER_API_VERSION: '1.38'
-SELENOID_VERSION: '1.9.1'
-selenoid_tmpfs: '/tmp'
-selenoid_config_dir: '/etc/selenoid'
-SELENOID_CHROME_VERSION:
+selenoid_cm_version: 1.5.7
+docker_api_version: 1.38
+selenoid_version: 1.9.1
+selenoid_tmpfs: /tmp
+selenoid_config_dir: /etc/selenoid
+selenoid_chrome_version:
   - 73.0
   - 72.0
   - 71.0
-SELENOID_FIREFOX_VERSION:
+selenoid_firefox_version:
   - 66.0
   - 65.0
   - 64.0
-SELENOID_OPERA_VERSION:
+selenoid_opera_version:
   - 58.0
   - 57.0
   - 56.0

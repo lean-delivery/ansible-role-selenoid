@@ -17,7 +17,7 @@
 - name: Creating user for daemons
   user:
     name: selenoid
-    create_home: True
+    create_home: true
     home: /home/selenoid
     comment: Selenoid user
     shell: /usr/sbin/nologin
@@ -40,23 +40,23 @@
 
 - name: Install binary selenoid
   include: selenoid-binary.yml
-  when: selenoid_binary == 'true'
+  when: selenoid_binary | bool
 
 - name: stop selenoid
   docker_container:
     name: selenoid
     state: absent
-  ignore_errors: True
+  ignore_errors: true
 
 - name: stop cm
   docker_container:
     name: cm
     state: absent
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Docker pull cm and Selenoid
   include: selenoid.yml
-  when: selenoid_binary == 'false'
+  when: not selenoid_binary | bool
 
 - name: Create consul service file
   template:

@@ -9,15 +9,17 @@
     state: present
   register: installed_packages
   until: installed_packages is succeeded
-  become: True
+  become: true
 
 - name: Enable amazon-linux-extras packages
-  shell: amazon-linux-extras install docker
+  command: amazon-linux-extras install docker
+  argv:
+    creates: /usr/bin/docker
   become: true
 
 - name: started docker.service
   systemd:
     state: started
-    enabled: yes
+    enabled: true
     name: docker
   become: true

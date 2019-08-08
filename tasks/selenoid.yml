@@ -4,9 +4,9 @@
     name: cm
     image: 'aerokube/cm:{{ selenoid_cm_version }}'
     state: started
-    pull: yes
-    recreate: yes
-    restart: yes
+    pull: true
+    recreate: true
+    restart: true
     restart_policy: unless-stopped
     timeout: 600
     volumes:
