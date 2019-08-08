@@ -22,10 +22,17 @@
       register: installed_packages
       until: installed_packages is succeeded
 
-    - name: Enable amazon-linux-extras packages
-      command: amazon-linux-extras install docker
-      args:
-        creates: /usr/bin/docker
+    - name: Install docker
+      yum:
+        name: docker-ce
+        state: present
+      register: installed_package
+      until: installed_package is succeeded
+
+    # - name: Enable amazon-linux-extras packages
+    #   command: amazon-linux-extras install docker
+    #   args:
+    #     creates: /usr/bin/docker
 
     - name: started docker.service
       systemd:
