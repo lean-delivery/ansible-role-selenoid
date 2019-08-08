@@ -30,16 +30,17 @@
     path: /home/selenoid
     mode: 0755
 
-- name: config dir
+- name: Config dir
   file:
     path: '{{ selenoid_config_dir }}'
     state: directory
     owner: selenoid
     group: selenoid
     mode: 0755
+  become: true
 
 - name: Install binary selenoid
-  include: selenoid-binary.yml
+  include_tasks: selenoid-binary.yml
   when: selenoid_binary | bool
 
 - name: stop selenoid
@@ -55,7 +56,7 @@
   ignore_errors: true
 
 - name: Docker pull cm and Selenoid
-  include: selenoid.yml
+  include_tasks: selenoid.yml
   when: not selenoid_binary | bool
 
 - name: Create consul service file
