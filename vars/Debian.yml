@@ -4,5 +4,5 @@ requirements:
   - apt-transport-https
   - ca-certificates
   - curl
-  - python-pip
+  # - python3-pip
   - software-properties-common
