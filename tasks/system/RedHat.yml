@@ -1,7 +1,8 @@
 ---
 - name: Selenoid | Install certain python modules for docker
   pip:
-    name: "docker-py"
+    name: docker-py
+    state: present
 
 - name: Install requirements packages
   package:
@@ -12,7 +13,9 @@
   become: True
 
 - name: Enable amazon-linux-extras packages
-  shell: "amazon-linux-extras install docker"
+  command: amazon-linux-extras install docker
+  argv:
+    creates: /usr/bin/docker
   become: true
 
 - name: started docker.service

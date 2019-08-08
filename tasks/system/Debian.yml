@@ -1,26 +1,26 @@
 ---
-- name: "APT - Add Docker GPG key"
+- name: APT - Add Docker GPG key
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
-- name: "APT - Add Docker repository"
+- name: APT - Add Docker repository
   apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
     state: present
     filename: docker
 
-- name: "APT - install misc packages"
+- name: APT - install misc packages
   apt:
-    name: "{{ requirements }}"
+    name: {{ requirements }}
     state: present
   register: installed_packages
   until: installed_packages is succeeded
   become: True
 
-- name: "APT - install 'docker-ce'"
+- name: APT - install 'docker-ce'
   apt:
-    name: "docker-ce"
+    name: docker-ce
     update_cache: True
 
 - name: install deps
@@ -32,8 +32,8 @@
 - name: Selenoid | Install certain python modules for docker
   pip:
     state: absent
-    name: "docker"
+    name: docker
 
 - name: Selenoid | Install certain python modules for docker
   pip:
-    name: "docker-py"
+    name: docker-py

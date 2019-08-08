@@ -2,7 +2,7 @@
 - name: Selenoid | Run CM container, download browser images and run selenoid
   docker_container:
     name: cm
-    image: "aerokube/cm:{{ selenoid_cm_version }}"
+    image: 'aerokube/cm:{{ selenoid_cm_version }}'
     state: started
     pull: yes
     recreate: yes
@@ -10,14 +10,14 @@
     restart_policy: unless-stopped
     timeout: 600
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "{{ selenoid_config_dir }}:/root"
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - '{{ selenoid_config_dir }}:/root'
     env:
-      OVERRIDE_HOME: "{{ selenoid_config_dir }}"
+      OVERRIDE_HOME: '{{ selenoid_config_dir }}'
     command: >
       selenoid start
         --last-versions 3
-        --args "-limit 15"
+        --args '-limit 15'
         --vnc
         --tmpfs 512
         --force

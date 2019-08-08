@@ -1,4 +1,8 @@
 ---
+- name: Debug ansible_os_family
+  debug:
+    var: ansible_os_family
+
 - name: Load a variables
   include_vars: '{{ ansible_os_family }}.yml'
 
@@ -10,25 +14,25 @@
   loop_control:
     loop_var: platform
 
-- name: "Creating user for daemons"
+- name: Creating user for daemons
   user:
-    name: "selenoid"
+    name: selenoid
     create_home: True
-    home: "/home/selenoid"
-    comment: "Selenoid user"
-    shell: "/usr/sbin/nologin"
+    home: /home/selenoid
+    comment: Selenoid user
+    shell: /usr/sbin/nologin
     groups: docker
-    state: "present"
+    state: present
   become: true
 
-- name: "Setup home directory permissions"
+- name: Setup home directory permissions
   file:
-    path: "/home/selenoid"
+    path: /home/selenoid
     mode: 0755
 
 - name: config dir
   file:
-    path: "{{ selenoid_config_dir }}"
+    path: {{ selenoid_config_dir }}
     state: directory
     owner: selenoid
     group: selenoid
@@ -57,5 +61,5 @@
 - name: Create consul service file
   template:
     src: consul-selenoid-service.json.j2
-    dest: "/etc/consul/consul.d/consul-selenoid-service.json"
+    dest: /etc/consul/consul.d/consul-selenoid-service.json
   become: true
