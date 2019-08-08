@@ -36,7 +36,7 @@
         baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
         gpgcheck: true
         gpgkey: https://download.docker.com/linux/centos/gpg
-        enabled: True
+        enabled: true
         state: present
 
     - name: Install docker
