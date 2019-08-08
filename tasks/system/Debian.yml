@@ -32,6 +32,7 @@
       apt:
         update_cache: true
         name:
+          - python-pip
           - python3-pip
       register: installed_packages
       until: installed_packages is succeeded
