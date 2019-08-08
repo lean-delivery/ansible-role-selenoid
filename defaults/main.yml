@@ -2,6 +2,7 @@
 selenoid_cm_version: 1.5.7
 docker_api_version: 1.38
 selenoid_version: 1.9.1
+selenoid_binary: true
 selenoid_tmpfs: /tmp
 selenoid_config_dir: /etc/selenoid
 selenoid_chrome_version:
