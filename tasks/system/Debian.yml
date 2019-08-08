@@ -1,49 +1,51 @@
 ---
-- name: APT - Add Docker GPG key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
-  register: installed_key
-  until: installed_key is succeeded
+- name: Become block
+  block:
+    - name: APT - Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+      register: installed_key
+      until: installed_key is succeeded
 
-- name: APT - Add Docker repository
-  apt_repository:
-    repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable'
-    state: present
-    filename: docker
+    - name: APT - Add Docker repository
+      apt_repository:
+        repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable'
+        state: present
+        filename: docker
 
-- name: APT - install misc packages
-  apt:
-    name: '{{ requirements }}'
-    state: present
-  register: installed_packages
-  until: installed_packages is succeeded
+    - name: APT - install misc packages
+      apt:
+        name: '{{ requirements }}'
+        state: present
+      register: installed_packages
+      until: installed_packages is succeeded
+
+    - name: APT - install 'docker-ce'
+      apt:
+        name: docker-ce
+        update_cache: true
+      register: installed_packages
+      until: installed_packages is succeeded
+
+    - name: install deps
+      apt:
+        update_cache: true
+        name:
+          - python3-pip
+      register: installed_packages
+      until: installed_packages is succeeded
+
+    - name: Selenoid | Uninstall docker module
+      pip:
+        state: absent
+        name: docker
+      register: uninstalled_packages
+      until: uninstalled_packages is succeeded
+
+    - name: Selenoid | Install certain python modules for docker
+      pip:
+        name: docker-py
+      register: installed_packages
+      until: installed_packages is succeeded
   become: true
-
-- name: APT - install 'docker-ce'
-  apt:
-    name: docker-ce
-    update_cache: true
-  register: installed_packages
-  until: installed_packages is succeeded
-
-- name: install deps
-  apt:
-    update_cache: true
-    name:
-      - python3-pip
-  register: installed_packages
-  until: installed_packages is succeeded
-
-- name: Selenoid | Uninstall docker module
-  pip:
-    state: absent
-    name: docker
-  register: uninstalled_packages
-  until: uninstalled_packages is succeeded
-
-- name: Selenoid | Install certain python modules for docker
-  pip:
-    name: docker-py
-  register: installed_packages
-  until: installed_packages is succeeded
