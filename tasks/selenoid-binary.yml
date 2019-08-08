@@ -43,7 +43,7 @@
 - name: Create systemd file selenoid
   template:
     src: selenoid.service.j2
-    dest: '/etc/systemd/system/selenoid.service'
+    dest: /etc/systemd/system/selenoid.service
     owner: selenoid
     group: selenoid
     mode: 0774

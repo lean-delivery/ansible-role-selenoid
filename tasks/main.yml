@@ -32,7 +32,7 @@
 
 - name: config dir
   file:
-    path: {{ selenoid_config_dir }}
+    path: '{{ selenoid_config_dir }}'
     state: directory
     owner: selenoid
     group: selenoid
