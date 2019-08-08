@@ -3,6 +3,8 @@
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
+  register: installed_key
+  until: installed_key is succeeded
 
 - name: APT - Add Docker repository
   apt_repository:
@@ -22,18 +24,26 @@
   apt:
     name: docker-ce
     update_cache: true
+  register: installed_packages
+  until: installed_packages is succeeded
 
 - name: install deps
   apt:
     update_cache: true
     name:
       - python3-pip
+  register: installed_packages
+  until: installed_packages is succeeded
 
-- name: Selenoid | Install certain python modules for docker
+- name: Selenoid | Uninstall docker module
   pip:
     state: absent
     name: docker
+  register: uninstalled_packages
+  until: uninstalled_packages is succeeded
 
 - name: Selenoid | Install certain python modules for docker
   pip:
     name: docker-py
+  register: installed_packages
+  until: installed_packages is succeeded
