@@ -29,10 +29,10 @@
     state: present
   become: true
 
-- name: Setup home directory permissions
-  file:
-    path: /home/selenoid
-    mode: 0755
+# - name: Setup home directory permissions
+#   file:
+#     path: /home/selenoid
+#     mode: 0755
 
 - name: Config dir
   file:
