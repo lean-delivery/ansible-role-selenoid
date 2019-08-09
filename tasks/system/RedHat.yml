@@ -15,42 +15,6 @@
       register: installed_package
       until: installed_package is succeeded
 
-    - name: Selenoid | Install certain python modules for docker
-      pip:
-        name: docker-py
-        state: present
-      register: installed_packages
-      until: installed_packages is succeeded
-
-    - name: Importing latest Docker GPG Key
-      rpm_key:
-        key: https://download.docker.com/linux/centos/gpg
-        state: present
-      register: installed_key
-      until: installed_key is succeeded
-
-    - name: Add Docker yum repository
-      yum_repository:
-        name: docker
-        description: Docker-ce repository
-        baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
-        gpgcheck: true
-        gpgkey: https://download.docker.com/linux/centos/gpg
-        enabled: true
-        state: present
-
-    - name: Install docker
-      yum:
-        name: docker-ce
-        state: present
-      register: installed_package
-      until: installed_package is succeeded
-
-    # - name: Enable amazon-linux-extras packages
-    #   command: amazon-linux-extras install docker
-    #   args:
-    #     creates: /usr/bin/docker
-
     - name: started docker.service
       systemd:
         state: started
