@@ -15,6 +15,7 @@ platforms:
     privileged: true
     groups:
       - rhel_family
+      - docker
   - name: test-docker-ubuntu1804-selenoid
     image: leandelivery/docker-systemd:ubuntu-18.04
     privileged: true
@@ -29,14 +30,19 @@ platforms:
       - SYS_ADMIN
     groups:
       - debian_family
+      - docker
 provisioner:
   name: ansible
-  # log: true
+  log: false
   lint:
     name: ansible-lint
   config_options:
     defaults:
       callback_whitelist: profile_tasks,timer
+  inventory:
+    group_vars:
+      docker:
+        docker_storage_driver: vfs
   playbooks:
     verify: ../resources/tests/verify.yml
 scenario:
