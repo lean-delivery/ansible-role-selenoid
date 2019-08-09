@@ -47,23 +47,28 @@
   include_tasks: selenoid-binary.yml
   when: selenoid_binary | bool
 
-- name: stop selenoid
+- name: Stop selenoid and cm
   docker_container:
-    name: selenoid
+    name: '{{ container_item }}'
     state: absent
   ignore_errors: true
-  become: true
-
-- name: stop cm
-  docker_container:
-    name: cm
-    state: absent
-  ignore_errors: true
+  loop:
+    - selenoid
+    - cm
+  loop_control:
+    loop_var: container_item
   become: true
 
 - name: Docker pull cm and Selenoid
   include_tasks: selenoid.yml
   when: not selenoid_binary | bool
+
+- name: Setup consul directory
+  file:
+    path: /etc/consul/consul.d
+    state: directory
+    recurse: true
+  become: true
 
 - name: Create consul service file
   template:

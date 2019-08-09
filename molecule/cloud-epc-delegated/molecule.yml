@@ -26,7 +26,7 @@ platforms:
       - debian_family
 provisioner:
   name: ansible
-  log: true
+  log: false
   playbooks:
     create: ../resources/provisioning/EPC/create.yml
     prepare: ../resources/prepare.yml

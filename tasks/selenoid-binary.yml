@@ -11,20 +11,20 @@
     - name: Docker pull images with chrome browser
       docker_image:
         name: 'selenoid/vnc:chrome_{{ item }}'
-      with_items:
-        - '{{ selenoid_chrome_version }}'
+        source: pull
+      loop: '{{ selenoid_chrome_version }}'
 
     - name: Docker pull images with firefox browser
       docker_image:
         name: 'selenoid/vnc:firefox_{{ item }}'
-      with_items:
-        - '{{ selenoid_firefox_version }}'
+        source: pull
+      loop: '{{ selenoid_firefox_version }}'
 
     - name: Docker pull images with opera browser
       docker_image:
         name: 'selenoid/vnc:opera_{{ item }}'
-      with_items:
-        - '{{ selenoid_opera_version }}'
+        source: pull
+      loop: '{{ selenoid_opera_version }}'
 
     - name: config dir
       file:
