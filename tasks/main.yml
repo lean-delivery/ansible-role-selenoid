@@ -52,12 +52,14 @@
     name: selenoid
     state: absent
   ignore_errors: true
+  become: true
 
 - name: stop cm
   docker_container:
     name: cm
     state: absent
   ignore_errors: true
+  become: true
 
 - name: Docker pull cm and Selenoid
   include_tasks: selenoid.yml

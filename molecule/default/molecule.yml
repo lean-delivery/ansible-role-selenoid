@@ -44,6 +44,7 @@ provisioner:
       docker:
         docker_storage_driver: vfs
   playbooks:
+    prepare: ../resources/prepare.yml
     verify: ../resources/tests/verify.yml
 scenario:
   name: default
