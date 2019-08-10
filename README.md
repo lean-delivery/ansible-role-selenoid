@@ -16,9 +16,12 @@ Set up [selenoid](https://github.com/lean-delivery/ansible-role-selenoid) in doc
 
 #### Variables
 
-* `selenoid_cm_version`: [Default: `1.3.1`] Install configuration manager version
-* `selenoid_version`: [Default: `1.4.0`] Install selenoid version
-* `selenoid_docker_api_version`: [Default: `1.24`] Docker api version (for Selenoid)
+* `selenoid_cm_version`: Install configuration manager version   
+  [Default: `1.3.1`]
+* `selenoid_version`: Install selenoid version   
+  [Default: `1.4.0`]
+* `selenoid_docker_api_version`: Docker api version (for Selenoid)   
+  [Default: `1.24`] 
 
 #### Example
 
@@ -26,7 +29,7 @@ Set up [selenoid](https://github.com/lean-delivery/ansible-role-selenoid) in doc
 ---
 - hosts: all
   roles:
-  - selenoid
+  - lean_delivery.selenoid
 ```
 
 ## Dependencies
