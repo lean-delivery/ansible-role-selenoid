@@ -30,13 +30,6 @@ Lint:
   tags:
     - aws
 
-Docker selenoid:
-  stage: deployment test
-  script:
-    - molecule test -s default
-  tags:
-    - aws
-
 AWS selenoid:
   variables:
     AWS_REGION: us-east-1
