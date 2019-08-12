@@ -1,0 +1,18 @@
+---
+- name: Become block
+  block:
+    - name: Install requirements packages
+      yum:
+        name: '{{ requirements }}'
+        state: present
+      register: installed_packages
+      retries: 15
+      until: installed_packages is succeeded
+
+    - name: Install python-pip
+      yum:
+        name: python-pip
+        state: present
+      register: installed_package
+      until: installed_package is succeeded
+  become: true

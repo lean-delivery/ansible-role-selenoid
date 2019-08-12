@@ -1,0 +1,7 @@
+---
+- name: started selenoid.service
+  systemd:
+    state: started
+    enabled: true
+    name: selenoid
+  become: true

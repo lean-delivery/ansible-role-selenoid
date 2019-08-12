@@ -1,62 +1,72 @@
 ---
-- name: install deps
-  apt:
-    update_cache: True
-    name:
-      - python3-pip
+- name: Load variables
+  include_vars: '{{ ansible_os_family }}.yml'
+
+- name: Choose platform based task
+  include_tasks: '{{ platform }}'
+  with_first_found:
+    - 'system/{{ ansible_os_family }}.yml'
+    - 'system/not-supported.yml'
+  loop_control:
+    loop_var: platform
 
 - name: Selenoid | Install certain python modules for docker
   pip:
-    state: absent
-    name: "docker"
+    name: docker
+    state: present
+  register: installed_packages
+  until: installed_packages is succeeded
+  become: true
 
-- name: Selenoid | Install certain python modules for docker
-  pip:
-    name: "docker-py"
-
-- name: install docker
-  include: docker.yml
-
-- name: config dir
-  file:
-    path: "{{ selenoid_config_dir }}"
-    state: directory
-    owner: root
-    group: root
-    mode: 777
-
-- name: stop selenoid
-  docker_container:
+- name: Creating user for daemons
+  user:
     name: selenoid
-    state: absent
-  ignore_errors: True
+    create_home: true
+    home: /home/selenoid
+    comment: Selenoid user
+    shell: /usr/sbin/nologin
+    groups: docker
+    state: present
+  become: true
 
-- name: stop cm
-  docker_container:
-    name: cm
-    state: absent
-  ignore_errors: True
+- name: Config dir
+  file:
+    path: '{{ selenoid_config_dir }}'
+    state: directory
+    owner: selenoid
+    group: selenoid
+    mode: 0755
+  become: true
 
-- name: Selenoid | Run CM container, download browser images and run selenoid
+- name: Install binary selenoid
+  include_tasks: selenoid-binary.yml
+  when: selenoid_binary | bool
+
+- name: Stop selenoid and cm
   docker_container:
-    name: cm
-    image: "aerokube/cm:{{ selenoid_cm_version }}"
-    state: started
-    pull: yes
-    recreate: yes
-    restart: yes
-    restart_policy: unless-stopped
-    timeout: 600
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "{{ selenoid_config_dir }}:/root"
-    env:
-      OVERRIDE_HOME: "{{ selenoid_config_dir }}"
-    command: >
-      selenoid start
-        --last-versions 3
-        --args "-limit 15"
-        --vnc
-        --tmpfs 512
-        --force
- 
+    name: '{{ container_item }}'
+    state: absent
+  ignore_errors: true
+  loop:
+    - selenoid
+    - cm
+  loop_control:
+    loop_var: container_item
+  become: true
+
+- name: Docker pull cm and Selenoid
+  include_tasks: selenoid.yml
+  when: not selenoid_binary | bool
+
+- name: Setup consul directory
+  file:
+    path: /etc/consul/consul.d
+    state: directory
+    recurse: true
+  become: true
+
+- name: Create consul service file
+  template:
+    src: consul-selenoid-service.json.j2
+    dest: /etc/consul/consul.d/consul-selenoid-service.json
+  become: true

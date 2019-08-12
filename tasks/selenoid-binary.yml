@@ -1,0 +1,51 @@
+---
+- block:
+    - name: Download selenoid_linux_amd64 binary file
+      get_url:
+        url: 'https://github.com/aerokube/selenoid/releases/download/{{ selenoid_version }}/selenoid_linux_amd64'
+        dest: '{{ selenoid_config_dir }}/selenoid'
+        owner: selenoid
+        group: selenoid
+        mode: a+x
+
+    - name: Docker pull images with chrome browser
+      docker_image:
+        name: 'selenoid/vnc:chrome_{{ item }}'
+        source: pull
+      loop: '{{ selenoid_chrome_version }}'
+
+    - name: Docker pull images with firefox browser
+      docker_image:
+        name: 'selenoid/vnc:firefox_{{ item }}'
+        source: pull
+      loop: '{{ selenoid_firefox_version }}'
+
+    - name: Docker pull images with opera browser
+      docker_image:
+        name: 'selenoid/vnc:opera_{{ item }}'
+        source: pull
+      loop: '{{ selenoid_opera_version }}'
+
+    - name: config dir
+      file:
+        path: '{{ selenoid_config_dir }}/config'
+        state: directory
+        owner: selenoid
+        mode: 0755
+
+    - name: Create browsers config for selenoid
+      template:
+        src: browsers.json.j2
+        dest: '{{ selenoid_config_dir }}/config/browsers.json'
+        owner: selenoid
+
+    - name: Create systemd file selenoid
+      template:
+        src: selenoid.service.j2
+        dest: /etc/systemd/system/selenoid.service
+        owner: selenoid
+        group: selenoid
+        mode: 0774
+      notify:
+        - started selenoid.service
+  become: true

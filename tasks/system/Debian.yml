@@ -1,0 +1,21 @@
+---
+- name: Become block
+  block:
+    - name: APT - install misc packages
+      apt:
+        name: '{{ requirements }}'
+        state: present
+      register: installed_packages
+      retries: 15
+      until: installed_packages is succeeded
+
+    - name: install deps
+      apt:
+        update_cache: true
+        name:
+          - python-pip
+          - python3-pip
+      register: installed_packages
+      retries: 8
+      until: installed_packages is succeeded
+  become: true
