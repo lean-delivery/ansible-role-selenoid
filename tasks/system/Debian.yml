@@ -16,17 +16,4 @@
           - python3-pip
       register: installed_packages
       until: installed_packages is succeeded
-
-    # - name: Selenoid | Uninstall docker module
-    #   pip:
-    #     state: absent
-    #     name: docker
-    #   register: uninstalled_packages
-    #   until: uninstalled_packages is succeeded
-
-    # - name: Selenoid | Install certain python modules for docker
-    #   pip:
-    #     name: docker
-    #   register: installed_packages
-    #   until: installed_packages is succeeded
   become: true
