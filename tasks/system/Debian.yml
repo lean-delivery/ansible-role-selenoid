@@ -6,6 +6,7 @@
         name: '{{ requirements }}'
         state: present
       register: installed_packages
+      retries: 15
       until: installed_packages is succeeded
 
     - name: install deps
@@ -15,5 +16,6 @@
           - python-pip
           - python3-pip
       register: installed_packages
+      retries: 8
       until: installed_packages is succeeded
   become: true

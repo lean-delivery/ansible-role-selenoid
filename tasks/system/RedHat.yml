@@ -6,5 +6,6 @@
         name: '{{ requirements }}'
         state: present
       register: installed_packages
+      retries: 15
       until: installed_packages is succeeded
   become: true
