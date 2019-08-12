@@ -56,9 +56,10 @@ authors:
 
 
 #### Example playbook for packer
+```yaml
 ---
 - hosts: all
   gather_facts: no
   roles:
     - role: ansible-role-selenoid
----
+```
