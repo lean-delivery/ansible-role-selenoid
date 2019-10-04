@@ -18,6 +18,11 @@
   until: installed_packages is succeeded
   become: true
 
+- name: Ensure group "docker" exists
+  group:
+    name: docker
+    state: present
+
 - name: Creating user for daemons
   user:
     name: selenoid
