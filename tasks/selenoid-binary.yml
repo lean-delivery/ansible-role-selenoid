@@ -8,14 +8,15 @@
         group: selenoid
         mode: a+x
 
-#    - name: Docker pull images with chrome browser
-#      docker_image:
-#        name: 'selenoid/vnc:chrome_77.0'
-#        source: pull
-##      loop: '{{ selenoid_chrome_version }}'
-#      async: 7200
-#      poll: 5
-#
+    - name: Docker pull images with chrome browser
+      docker_image:
+        name: 'selenoid/vnc:chrome_{{ item }}'
+        source: pull
+        debug: yes
+      loop: '{{ selenoid_chrome_version }}'
+      async: 7200
+      poll: 5
+
 #    - name: Docker pull images with firefox browser
 #      docker_image:
 #        name: 'selenoid/vnc:firefox_{{ item }}'
