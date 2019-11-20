@@ -17,12 +17,12 @@
       poll: 5
 
     - name: Docker pull images with chrome browser
-        docker_image:
-          name: 'selenoid/vnc:chrome_73.0'
-          source: pull
+      docker_image:
+        name: 'selenoid/vnc:chrome_73.0'
+        source: pull
 #       loop: '{{ selenoid_chrome_version }}'
-        async: 7200
-        poll: 5
+      async: 7200
+      poll: 5
 
     - name: Docker pull images with firefox browser
       docker_image:
