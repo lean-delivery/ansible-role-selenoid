@@ -1,6 +1,4 @@
 ---
-dependencies: []
-
 galaxy_info:
   role_name: "selenoid"
   author: "Lean Delivery team team@lean-delivery.com"
@@ -26,3 +24,5 @@ galaxy_info:
   galaxy_tags:
     - selenoid
     - docker
+
+dependencies: []

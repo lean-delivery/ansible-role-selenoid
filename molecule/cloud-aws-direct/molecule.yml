@@ -25,21 +25,6 @@ platforms:
     groups:
       - rhel_family
 
-  - name: test-aws-amazon2-selenoid
-    image: ami-0b898040803850657
-    platform: amazon2
-    instance_type: m5.large
-    region: us-east-1
-    vpc_subnet_id: subnet-0f2b9cd66faea38af
-    assign_public_ip: False
-    spot_price: 0.04
-    security_group_name:
-      - default
-    wait_timeout: 1800
-    ssh_user: ec2-user
-    groups:
-      - rhel_family
-
   - name: test-aws-ubuntu16-selenoid
     image: ami-09677e0a6b14905b0
     platform: ubuntu16
@@ -84,19 +69,27 @@ platforms:
     ssh_user: admin
     groups:
       - debian_family
+
+  - name: test-aws-Amazon2-selenoid
+    image: ami-0b898040803850657
+    platform: amazon2
+    instance_type: m5.large
+    region: us-east-1
+    vpc_subnet_id: subnet-0f2b9cd66faea38af
+    assign_public_ip: false
+    spot_price: 0.04
+    security_group_name:
+      - default
+    wait_timeout: 1800
+    ssh_user: ec2-user
+    groups:
+      - rhel_family
 provisioner:
   name: ansible
-  log: false
+  log: true
   config_options:
     defaults:
       callback_whitelist: profile_tasks,timer
-  inventory:
-    group_vars:
-      windows:
-        ansible_connection: winrm
-        ansible_password: "{{ lookup('env', 'WINRM_ADMIN_PWD') | default('M0leCule123!', true) }}"
-        ansible_winrm_transport: credssp
-        ansible_winrm_server_cert_validation: ignore
   playbooks:
     create: ../resources/provisioning/AWS/create.yml
     prepare: ../resources/prepare.yml
