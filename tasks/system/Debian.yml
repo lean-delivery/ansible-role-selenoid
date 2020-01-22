@@ -13,7 +13,7 @@
       apt:
         update_cache: true
         name:
-          - python-pip
+          # - python-pip
           - python3-pip
       register: installed_packages
       retries: 8
