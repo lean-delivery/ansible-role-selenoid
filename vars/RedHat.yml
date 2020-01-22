@@ -4,3 +4,6 @@ requirements:
   - device-mapper-persistent-data
   - lvm2
   - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+selenoid_default_pip_executable: pip
+selenoid_default_python_executable: python

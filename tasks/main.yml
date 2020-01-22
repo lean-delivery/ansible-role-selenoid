@@ -14,6 +14,7 @@
   pip:
     name: docker
     state: present
+    executable: '{{ pip_executable | default("pip") }}'
   register: installed_packages
   until: installed_packages is succeeded
   become: true

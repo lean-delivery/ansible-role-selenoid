@@ -12,9 +12,7 @@
     - name: install deps
       apt:
         update_cache: true
-        name:
-          # - python-pip
-          - python3-pip
+        name: '{{ python_executable | default("python3") }}-pip'
       register: installed_packages
       retries: 8
       until: installed_packages is succeeded
