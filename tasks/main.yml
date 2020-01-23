@@ -14,9 +14,15 @@
   pip:
     name: docker
     state: present
+    executable: '{{ pip_executable | default("pip") }}'
   register: installed_packages
   until: installed_packages is succeeded
   become: true
+
+- name: Ensure group "docker" exists
+  group:
+    name: docker
+    state: present
 
 - name: Creating user for daemons
   user:

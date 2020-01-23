@@ -1,8 +1,8 @@
 ---
 # Run all tests
-# default:
-#   image:
-#     name: leandelivery/docker-ansible-ci:ansible-2.7
+default:
+  image:
+    name: leandelivery/docker-ansible-ci:ansible-2.8
 
 stages:
   - lint
@@ -30,6 +30,13 @@ Lint:
   tags:
     - aws
 
+.Docker selenoid:
+  stage: deployment test
+  script:
+    - molecule test -s default
+  tags:
+    - aws
+
 AWS selenoid:
   variables:
     AWS_REGION: us-east-1
@@ -39,7 +46,7 @@ AWS selenoid:
   tags:
     - aws
 
-EPC selenoid:
+.EPC selenoid:
   variables:
     EPC_REGION: EPAM-BY2
   stage: deployment test
