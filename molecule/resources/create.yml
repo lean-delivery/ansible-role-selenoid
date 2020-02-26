@@ -14,7 +14,6 @@
 
     ansible_user: "{{ lookup('env', 'WINRM_ADMIN_ACC') | default('molecule', true) }}"
     ansible_password: "{{ lookup('env', 'WINRM_ADMIN_PWD') | default('M0leCule123!', true) }}"
-    ec2_user_data: "{{ lookup('template', './windows') }}"
     winrm_port: 5986
 
     aws_platforms:
@@ -140,10 +139,6 @@
         spot_price: '{{ item.spot_price | default(omit) }}'
         spot_wait_timeout: '{{ item.wait_timeout | default(600) }}'
         instance_initiated_shutdown_behavior: '{{ item.shutdown_behavior | default("terminate") }}'
-        user_data: >-
-            {{ ((item.platform | default(omit) in aws_platforms.windows) or
-                ('windows' in item.groups))
-                | ternary(ec2_user_data, omit) }}
         wait: true
         wait_timeout: '{{ item.wait_timeout | default(600) }}'
         assign_public_ip: '{{ item.assign_public_ip | default(true) }}'
