@@ -6,6 +6,7 @@ selenoid_binary: true
 selenoid_tmpfs: /tmp
 selenoid_config_dir: /etc/selenoid
 selenoid_chrome_version:
+  - 80.0
   - 77.0
   - 73.0
   - 72.0
