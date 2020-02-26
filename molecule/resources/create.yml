@@ -1,0 +1,249 @@
+---
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  no_log: "{{ not ((lookup('env', 'MOLECULE_DEBUG') | bool) or (molecule_yml.provisioner.log | default(false) | bool)) }}"
+  vars:
+    ssh_port: 22
+    ci_branch_name: "{{ lookup('env', 'CI_COMMIT_REF_NAME' ) }}"
+    keypair_name: "molecule-key_\
+      {{ lookup('env','MOLECULE_PROJECT_DIRECTORY').split('/')[-1] }}_\
+      {{ lookup('env','MOLECULE_SCENARIO_NAME') }}-{{ lookup('env', 'CI_COMMIT_REF_NAME' ) }}"
+    keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+
+    ansible_user: "{{ lookup('env', 'WINRM_ADMIN_ACC') | default('molecule', true) }}"
+    ansible_password: "{{ lookup('env', 'WINRM_ADMIN_PWD') | default('M0leCule123!', true) }}"
+    winrm_port: 5986
+
+    aws_platforms:
+      linux:
+        centos8:
+          description: Cent OS Stream (CentOS Linux Stream)*
+        centos7:
+          description: CentOS Linux 7 x86_64 HVM EBS ENA 1901_01
+        centos6:
+          description: CentOS Linux 6 x86_64 HVM EBS ENA 1901_01
+        ubuntu16:
+          description: Canonical, Ubuntu, 16.04 LTS, amd64 xenial image*
+          owner-id: '099720109477'
+        ubuntu18:
+          description: Canonical, Ubuntu, 18.04 LTS, amd64 bionic image*
+          owner-id: '099720109477'
+        debian9:
+          name: debian-stretch-hvm-x86_64*
+          owner-id: '379101102735'
+        debian10:
+          name: debian-10-amd64-*
+          owner-id: '136693071363'
+        amazon:
+          description: Amazon Linux AMI*
+          owner-id: '137112412989'
+        amazon2:
+          description: Amazon Linux 2 AMI*
+          owner-id: '137112412989'
+        rhel7:
+          name: RHEL-7.7_HVM-*
+        rhel8:
+          name: RHEL-8.0.0_HVM-*
+      windows:
+        windows2016:
+          name: Windows_Server-2016-English-Full-Base-*
+        windows2016core:
+          name: Windows_Server-2016-English-Core-Base-*
+        windows2019:
+          name: Windows_Server-2019-English-Full-Base-*
+        windows2019core:
+          name: Windows_Server-2019-English-Core-Base-*
+
+  tasks:
+
+    - name: debug CI_COMMIT_REF_NAME
+      debug:
+        var: ci_branch_name
+
+    - name: Find latest AMI for server
+      ec2_ami_facts:
+        filters: >-
+          {{ (aws_platforms.linux
+            | combine(aws_platforms.windows))[item.platform]
+            | combine({'architecture': 'x86_64', 'root-device-type': 'ebs', 'virtualization-type': 'hvm'}) }}
+      register: amis
+      when: item.platform in aws_platforms.linux | combine(aws_platforms.windows)
+      loop: '{{ molecule_yml.platforms | selectattr("platform", "defined") | list }}'
+
+    - name: Set latest AMIs for platforms
+      set_fact:
+        last_ami: >-
+          {{ last_ami | default({})
+            | combine( {molecule_platform.name:
+              (
+                amis.results
+                  | selectattr("item.platform", "equalto", molecule_platform.platform)
+                  | sum(attribute="images", start=[])
+                  | sort(attribute="creation_date")
+                  | map(attribute="image_id")
+                  | list
+                  | last
+              )
+                    } )
+          }}
+      loop: '{{ molecule_yml.platforms | selectattr("platform", "defined") | list }}'
+      loop_control:
+        loop_var: molecule_platform
+
+    - name: Set images dict
+      set_fact:
+        ami_images: >-
+          {{ ami_images | default({})
+            | combine( { item.name: ((last_ami|default({}))[item.name] | default(item.image)) } ) }}
+      loop: '{{ molecule_yml.platforms }}'
+
+    # Get AMI infos to find out root_device_name from AMI
+    # Further we'll use proper AMI's root_device_name during ec2 instance creation for root volume size customization
+    - name: Get image facts
+      ec2_ami_facts:
+        image_ids: '{{ ami_images.values() | list }}'
+      register: ami_facts
+
+    # We'll get info about AMI EBS volume: device_name, volume_size, volume_type...
+    # to use later during EC2 instance creation
+    - name: Set ami volume dict
+      set_fact:
+        ami_volume: >-
+          {{ ami_volume | default({})
+            | combine(
+              { item.key:
+                (
+                  ami_facts.images
+                  | selectattr("image_id", "equalto", item.value)
+                  | map(attribute="block_device_mappings")
+                  | first
+                  | selectattr("ebs", "defined")
+                  | first
+                )
+              }
+            )
+          }}
+      loop: '{{ ami_images|dict2items }}'
+
+    - name: Create keypair
+      ec2_key:
+        name: '{{ keypair_name }}'
+      register: keypair
+
+    - name: Persist the keypair
+      copy:
+        dest: '{{ keypair_path }}'
+        content: '{{ keypair.key.private_key }}'
+        mode: 0600
+      when: keypair.changed | bool
+
+    - name: Create molecule instance(s)
+      ec2:
+        region: '{{ item.region | default(item.aws_region) }}'
+        key_name: '{{ keypair_name }}'
+        image: '{{ ami_images[item.name] }}'
+        instance_type: '{{ item.instance_type }}'
+        instance_profile_name: '{{ item.profile_name | default(omit) }}'
+        vpc_subnet_id: '{{ item.vpc_subnet_id }}'
+        group: '{{ item.aws_sec_group | default(item.security_group_name) }}'
+        volumes:
+          - device_name: '{{ ami_volume[item.name]["device_name"] }}' # original EBS root device name from AMI
+            volume_type: '{{ ami_volume[item.name]["ebs"]["volume_type"] }}' # original EBS root device type, ie "gp2"
+            volume_size: 20
+            delete_on_termination: true
+        instance_tags:
+          instance: '{{ item.name }}'
+          Name: '{{ item.name }}-{{ ci_branch_name }}'
+          CreatedTime: '{{ lookup("pipe","date +%Y-%m-%d") }}'
+          ManagedBy: 'Molecule'
+          ssh_user: '{{ item.ssh_user | default(omit) }}'
+        spot_price: '{{ item.spot_price | default(omit) }}'
+        spot_wait_timeout: '{{ item.wait_timeout | default(600) }}'
+        instance_initiated_shutdown_behavior: '{{ item.shutdown_behavior | default("terminate") }}'
+        wait: true
+        wait_timeout: '{{ item.wait_timeout | default(600) }}'
+        assign_public_ip: '{{ item.assign_public_ip | default(true) }}'
+        exact_count: 1
+        count_tag:
+          Name: '{{ item.name }}-{{ ci_branch_name }}'
+      register: server
+      loop: '{{ molecule_yml.platforms }}'
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) creation to complete
+      async_status:
+        jid: '{{ item.ansible_job_id }}'
+      loop: '{{ server.results }}'
+      register: instance_create
+      until: instance_create.finished
+      delay: 20
+      retries: 300
+
+    - name: Create combined list of volumes
+      set_fact:
+        instance_volumes_list: >-
+          {{ instance_volumes_list | default([])
+            + (item.block_device_mapping.values()
+                | map('combine', {'tag': item.tags.Name})
+                | list) }}
+      loop: >-
+          {{ instance_create.results
+            | map(attribute='instances')
+            | map('first')
+            | list }}
+    # This functionality required python modules boto, boto3, botocore
+    - name: Tag volumes
+      ec2_tag:
+        resource: '{{ item.volume_id }}'
+        tags:
+          Name: '{{ item.tag }}'
+          Instance: '{{ item.tag }}'
+          CreatedTime: '{{ ansible_date_time.iso8601_basic }}'
+          ManagedBy: 'Molecule'
+      loop: '{{ instance_volumes_list }}'
+
+    - name: Populate instance config dict
+      set_fact:
+        instance_conf_dict:
+          instance: '{{ item.instances[0].tags.instance }}'
+          address: '{{ item.instances[0].private_ip }}'
+          public_ip: '{{ item.instances[0].public_ip | default("") }}'
+          user: '{{ item.instances[0].tags.ssh_user | default(ansible_user) }}'
+          port: >-
+            {{ ((item.item.item.platform | default(omit) in aws_platforms.windows) or
+                ('windows' in item.item.item.groups))
+                | ternary(winrm_port, ssh_port) }}
+          identity_file: '{{ keypair_path }}'
+          instance_ids: '{{ item.instance_ids }}'
+          connection: >-
+            {{ ((item.item.item.platform | default(omit) in aws_platforms.windows) or
+                ('windows' in item.item.item.groups))
+                | ternary('winrm', 'ssh') }}
+      loop: '{{ instance_create.results }}'
+      register: instance_config_dict
+      when: instance_create.changed | bool
+
+    - name: Convert instance config dict to a list
+      set_fact:
+        instance_conf: >-
+          {{ instance_config_dict.results
+            | map(attribute='ansible_facts.instance_conf_dict') | list }}
+      when: instance_create.changed | bool
+
+    - name: Dump instance config
+      copy:
+        content: '{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}'
+        dest: '{{ molecule_instance_config }}'
+      when: instance_create.changed | bool
+
+    - name: Wait for connection
+      wait_for:
+        port: '{{ item.port }}'
+        host: '{{ item.address }}'
+        delay: 2
+        connect_timeout: 2
+        timeout: 320
+      loop: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"

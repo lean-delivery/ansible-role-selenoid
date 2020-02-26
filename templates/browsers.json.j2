@@ -1,8 +1,14 @@
 
 {
     "chrome": {
-        "default": "77.0",
+        "default": "80.0",
         "versions": {
+            "80.0": {
+                "image": "selenoid/vnc:chrome_80.0",
+                "port": "4444",
+                "path": "/",
+                "shmSize": 1073741824
+            },
             "77.0": {
                 "image": "selenoid/vnc:chrome_77.0",
                 "port": "4444",
@@ -13,13 +19,8 @@
                 "image": "selenoid/vnc:chrome_73.0",
                 "port": "4444",
                 "path": "/"
-            },
-            "72.0": {
-                "image": "selenoid/vnc:chrome_72.0",
-                "port": "4444",
-                "path": "/"
             }
-	    }
+      }
     },
     "opera": {
         "default": "58.0",
@@ -62,4 +63,3 @@
         }
     }
 }
-
