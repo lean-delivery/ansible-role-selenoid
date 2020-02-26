@@ -126,8 +126,8 @@
         vpc_subnet_id: '{{ item.vpc_subnet_id }}'
         group: '{{ item.aws_sec_group | default(item.security_group_name) }}'
         volumes:
-          - device_name: /dev/xvda
-            volume_type: gp2
+          - device_name: '{{ ami_volume[item.name]["device_name"] }}' # original EBS root device name from AMI
+            volume_type: '{{ ami_volume[item.name]["ebs"]["volume_type"] }}' # original EBS root device type, ie "gp2"
             volume_size: 20
             delete_on_termination: true
         instance_tags:
