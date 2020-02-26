@@ -12,6 +12,7 @@
       docker_image:
         name: 'selenoid/vnc:chrome_{{ item }}'
         source: pull
+        debug: true
       loop: '{{ selenoid_chrome_version }}'
       async: 7200
       poll: 5
