@@ -1,22 +1,22 @@
 ---
-selenoid_cm_version: 1.5.7
+selenoid_cm_version: 1.7.1
 docker_api_version: 1.38
-selenoid_version: 1.9.1
+selenoid_version: 1.10.0
 selenoid_binary: true
 selenoid_tmpfs: /tmp
 selenoid_config_dir: /etc/selenoid
 selenoid_chrome_version:
   - 80.0
-  - 77.0
-  - 73.0
-selenoid_firefox_version:
-  - 66.0
-  - 65.0
-  - 64.0
-selenoid_opera_version:
-  - 58.0
-  - 57.0
-  - 56.0
+#   - 77.0
+#   - 73.0
+# selenoid_firefox_version:
+#   - 66.0
+#   - 65.0
+#   - 64.0
+# selenoid_opera_version:
+#   - 58.0
+#   - 57.0
+#   - 56.0
 concurrent_session_count: 5
 
 pip_executable: '{{ selenoid_default_pip_executable }}'

@@ -16,21 +16,21 @@
       async: 7200
       poll: 5
 
-    - name: Docker pull images with firefox browser
-      docker_image:
-        name: 'selenoid/vnc:firefox_{{ item }}'
-        source: pull
-      loop: '{{ selenoid_firefox_version }}'
-      async: 7200
-      poll: 5
+    # - name: Docker pull images with firefox browser
+    #   docker_image:
+    #     name: 'selenoid/vnc:firefox_{{ item }}'
+    #     source: pull
+    #   loop: '{{ selenoid_firefox_version }}'
+    #   async: 7200
+    #   poll: 5
 
-    - name: Docker pull images with opera browser
-      docker_image:
-        name: 'selenoid/vnc:opera_{{ item }}'
-        source: pull
-      loop: '{{ selenoid_opera_version }}'
-      async: 7200
-      poll: 5
+    # - name: Docker pull images with opera browser
+    #   docker_image:
+    #     name: 'selenoid/vnc:opera_{{ item }}'
+    #     source: pull
+    #   loop: '{{ selenoid_opera_version }}'
+    #   async: 7200
+    #   poll: 5
 
     - name: config dir
       file:

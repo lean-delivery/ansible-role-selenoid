@@ -1,26 +1,26 @@
 {
-    "service": {
-      "id": "selenoid",
-      "name": "selenoid",
-      "tags": ["chrome","opera","firefox"],
-      "Port": 4444,
-      "meta": {
-          "firefox": "65.0,64.0,63.0",
-          "opera": "58.0,57.0,56.0",
-          "chrome": "80.0,77.0,73.0"
-      },
-      "check": {
-        "id": "Selenoid_HTTP",
-        "name": "Selenoid Health check",
-        "http": "http://localhost:4444/status",
-        "tls_skip_verify": false,
-        "method": "GET",
-        "interval": "10s",
-        "timeout": "1s"
-      },
-      "weights": {
-        "passing": 5,
-        "warning": 1
-      }
+  "service":{
+    "id":"selenoid",
+    "name":"selenoid",
+    "tags":[
+      "chrome"
+    ],
+    "Port":4444,
+    "meta":{
+      "chrome":"80.0"
+    },
+    "check":{
+      "id":"Selenoid_HTTP",
+      "name":"Selenoid Health check",
+      "http":"http://localhost:4444/status",
+      "tls_skip_verify":false,
+      "method":"GET",
+      "interval":"10s",
+      "timeout":"1s"
+    },
+    "weights":{
+      "passing":5,
+      "warning":1
     }
+  }
 }
