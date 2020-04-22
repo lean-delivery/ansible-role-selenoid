@@ -73,6 +73,6 @@
 
 - name: Create consul service file
   template:
-    src: consul-selenoid-service.json.j2
+    src: '{{ consul_service_config }}.j2'
     dest: /etc/consul/consul.d/consul-selenoid-service.json
   become: true

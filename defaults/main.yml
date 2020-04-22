@@ -19,5 +19,8 @@ selenoid_opera_version:
   - 56.0
 concurrent_session_count: 5
 
+browser_config: browsers.json
+consul_service_config: consul-selenoid-service.json
+
 pip_executable: '{{ selenoid_default_pip_executable }}'
 python_executable: '{{ selenoid_default_python_executable }}'
