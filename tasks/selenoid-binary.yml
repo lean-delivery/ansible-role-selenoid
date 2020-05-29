@@ -41,7 +41,7 @@
 
     - name: Create browsers config for selenoid
       template:
-        src: browsers.json.j2
+        src: '{{ browser_config }}.j2'
         dest: '{{ selenoid_config_dir }}/config/browsers.json'
         owner: selenoid
 
