@@ -12,8 +12,11 @@
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
       - '{{ selenoid_config_dir }}:/root'
+      - '{{ selenoid_config_dir }}/video:/opt/selenoid/video/'
+      - '{{ selenoid_config_dir }}/logs:/opt/selenoid/logs/'
     env:
       OVERRIDE_HOME: '{{ selenoid_config_dir }}'
+      OVERRIDE_VIDEO_OUTPUT_DIR: '{{ selenoid_config_dir }}/video'
     command: >
       selenoid start
         --last-versions 3
